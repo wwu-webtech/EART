@@ -4,35 +4,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Accessibility Grader Result</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
-    <h1>Accessibility Grader Result</h1>
-    {% if data %}
-        <h2>{{ data.page_name }}</h2>
-        <p><strong>Page Title:</strong> {{ data.page_title }}</p>
-        
-        <h3>Accessibility Scores:</h3>
-        <ul>
-            <li>Alt Text: {{ data.accessibility_scores.alt_text }}%</li>
-            <li>Heading Structure: {{ data.accessibility_scores.heading_structure }}%</li>
-            <li>Page Title: {{ data.accessibility_scores.page_title }}%</li>
-        </ul>
-        
-        <h3>Heading Structure:</h3>
-        <ul>
-            {% for heading in data.heading_structure %}
-                <li>{{ heading.0 }} - {{ heading.1 }}</li>
-            {% endfor %}
-        </ul>
-        
-        <h3>Image Alt Text:</h3>
-        <ul>
-            {% for image in data.image_alt_text %}
-                <li>Src: {{ image.0 }}, Alt: {{ image.1 }}</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>Please provide a URL.</p>
-    {% endif %}
+    <div class="container">
+        <h1>Accessibility Grader Result</h1>
+        {% if data %}
+            <h2>{{ data.page_name }}</h2>
+            <p><strong>Page Title:</strong> {{ data.page_title }}</p>
+            
+            <h3>Accessibility Scores:</h3>
+            <ul>
+                <li>Alt Text: {{ data.accessibility_scores.alt_text }}%</li>
+                <li>Heading Structure: {{ data.accessibility_scores.heading_structure }}%</li>
+                <li>Page Title: {{ data.accessibility_scores.page_title }}%</li>
+            </ul>
+            
+            <h3>Heading Structure:</h3>
+            <ul>
+                {% for heading in data.heading_structure %}
+                    <li>{{ heading.0 }} - {{ heading.1 }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>Image Alt Text:</h3>
+            <ul>
+                {% for image in data.image_alt_text %}
+                    <li>Src: {{ image.0 }}, Alt: {{ image.1 }}</li>
+                {% endfor %}
+            </ul>
+            
+            <h3>Videos:</h3>
+            <ul>
+                {% for video in data.videos %}
+                    <li>Source: {{ video.source }}, Alt: {{ video.alt }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Please provide a URL.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
