@@ -5,27 +5,50 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home | Accessibility Review Tool | Western Washington University</title>
     <link rel="stylesheet" href="../static/css/styles.css">
+
+
 </head>
 <body>
     <header>
-        <!-- If we add Western's Ashlar CSS library, it will format the app like most Western apps are styled, give us a same page link, and the opportunity to easily provide a main navigation in the header region in case we want to add more options to the app -->
+        <wwu-pre-header></wwu-pre-header>
+        <wwu-header sitename="Accessibility Review Tool" regioncontent=""></wwu-header>
+    
+        <wwu-main-nav>      
+          <a href="/">Home</a>        
+        </wwu-main-nav>
     </header>
-    <main id="page-content">
-    <div class="container">
-        <h1>Efficient Accessibility Review Tool</h1>
+    <main id="main-content">
+  <div class="page-content">
+    <div class="region-wrapper">
+      
+        <div class="container">
+        <h1>Efficient Accessibility Review Tool (EART)</h1>
         <form action="/" method="post">
             <label for="url">Enter Website URL:</label><br>
             <input type="text" id="url" name="url"><br><br>
             <input type="submit" value="Grade">
         </form>
-    </div>
+    </div> <!-- class "container"   -->
+    </div> <!-- class region-wrapper  -->
+    </div> <!-- class "page-content" -->
 </main>
 <footer>
-<!-- put relevant footer information in here -->
-<!-- contact information? copyright information? -->
+    <wwu-footer></wwu-footer>
 </footer>
 
 <!-- Supply scripts here -->
+  <!-- scripts for ashlar components -->
+  
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/search.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/pre-header.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-footer.js"></script>
+
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
+  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>  
 
 </body>
 </html>
