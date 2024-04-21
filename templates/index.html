@@ -3,52 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | Accessibility Review Tool | Western Washington University</title>
+    <title>Home | Efficient Accessibility Review Tool | Western Washington University</title>
     <link rel="stylesheet" href="../static/css/styles.css">
 
+    <!-- My component script -->
+    <script src="../static/js/autofill.js"></script>
+    
+    <!-- Ashlar components scripts -->
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/search.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/pre-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-footer.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>
 
 </head>
 <body>
-    <header>
-        <wwu-pre-header></wwu-pre-header>
-        <wwu-header sitename="Accessibility Review Tool" regioncontent=""></wwu-header>
-    
-        <wwu-main-nav>      
-          <a href="/">Home</a>        
-        </wwu-main-nav>
-    </header>
-    <main id="main-content">
-  <div class="page-content">
-    <div class="region-wrapper">
-      
-        <div class="container">
-        <h1>Efficient Accessibility Review Tool (EART)</h1>
-        <form action="/" method="post">
-            <label for="url">Enter Website URL:</label><br>
-            <input type="text" id="url" name="url"><br><br>
-            <input type="submit" value="Grade">
-        </form>
-    </div> <!-- class "container"   -->
-    </div> <!-- class region-wrapper  -->
-    </div> <!-- class "page-content" -->
-</main>
-<footer>
-    <wwu-footer></wwu-footer>
-</footer>
-
-<!-- Supply scripts here -->
-  <!-- scripts for ashlar components -->
   
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/search.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/pre-header.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-footer.js"></script>
+  <div class="container">
 
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
-  <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>  
+    <header>
+      <wwu-pre-header></wwu-pre-header>
+      <wwu-header sitename="Efficient Accessibility Review Tool" regioncontent=""></wwu-header>
+      <!--
+      <wwu-main-nav style="text-align: center;">
+        <a href="/" style="font-size: 100px;">Home</a>        
+      </wwu-main-nav>
+      -->
+    </header>
 
+    <main id="main-content">
+      <div class="page-content">
+        <div class="region-wrapper">
+          <div class="app-container">
+            <h1>Efficient Accessibility Review Tool (EART)</h1>
+            <form id="urlForm" action="/" method="post" onsubmit="AutofillOnSubmit(event)">
+              <!-- Ensure the label is properly included -->
+              <label for="url">Enter Website URL:</label>
+              <input type="text" id="url" name="url">
+              <input type="submit" value="Grade">
+            </form>
+            <p>Welcome to the Efficient Accessibility Review Tool (EART)! This tool is designed to streamline accessibility reviews for web applications, empowering developers and accessibility testers to ensure compliance with accessibility standards. Get started by entering the URL of the website you want to review and click on the "Grade" button. Happy reviewing!</p> 
+          </div> <!-- class "app-container"   -->
+        </div> <!-- class region-wrapper  -->
+      </div> <!-- class "page-content" -->
+    </main>
+
+    <footer>
+      <wwu-footer></wwu-footer>
+    </footer>
+
+  </div>
 </body>
 </html>

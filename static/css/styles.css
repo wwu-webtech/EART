@@ -1,5 +1,3 @@
-/* styles.css */
-
 /* Global styles */
 body {
     font-family: Arial, sans-serif;
@@ -14,15 +12,23 @@ body {
 
 .container {
     width: 100%;
-    max-width: 1000px; 
     margin: auto;
-    padding: 20px;
+    padding: 0;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     height: auto;
 }
 
+/* App-specific styles */
+.app-container label {
+    margin-bottom: 10px;
+    color: black; /* Change label text color to black */
+}
+
+.app-container p {
+    color: black; /* Change paragraph text color to black */
+}
 
 h1 {
     color: #007bff;
@@ -51,4 +57,33 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
     background-color: #0056b3;
+}
+
+/* Result container styles */
+.result-container h2,
+.result-container h3,
+.result-container p,
+.result-container li {
+    color: black; /* Change text color to black */
+}
+
+.result-container table {
+    border-collapse: collapse;
+}
+
+.result-container thead {
+    background-color: white; /* White background for thead */
+}
+
+.result-container th,
+.result-container td {
+    padding: 8px;
+    border: 1px solid black; /* Lighter grey borders */
+    text-align: left;
+    color: black; /* Change column name text color to black */
+    background-color: rgb(235, 235, 235); /* White background for cells */
+}
+
+.result-container th {
+    background-color: #c7c7c7; /* Dark gray background */
 }
