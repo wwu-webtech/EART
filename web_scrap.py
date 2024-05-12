@@ -21,8 +21,8 @@ def scrape_website(url):
     # Extract the alt text on each of the images on the page
     images = soup.find_all('img')
     image_alt_text = [(image['src'], image.get('alt')) for image in images]
-    
-    
+
+
     # Extract videos from direct <video> elements
     videos = []
     video_elements = soup.find_all('video')
@@ -43,6 +43,12 @@ def scrape_website(url):
             videos.append({'source': 'https://player.vimeo.com/video/' + video_id, 'alt': ''})
         # Add other video hosting platforms as needed
         
+
+    # Extract header, main, and footer contents
+    header_content = soup.find('header').prettify() if soup.find('header') else None
+    main_content = soup.find('main').prettify() if soup.find('main') else None
+    footer_content = soup.find('footer').prettify() if soup.find('footer') else None
+    
     # Calculate accessibility scores
     accessibility_scores = calculate_accessibility_scores(heading_structure, image_alt_text, page_title)
     
