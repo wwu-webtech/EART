@@ -11,8 +11,7 @@ def scrape_website(url):
     soup = BeautifulSoup(response.text, 'html.parser')
     
     # Extract the name of the page and its title element
-    page_name = soup.find('title').get_text()
-    page_title = soup.title.string
+    page_title = soup.find('title').get_text()
     
     # Extract the heading structure of the page
     headings = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
@@ -49,14 +48,10 @@ def scrape_website(url):
     main_content = soup.find('main').prettify() if soup.find('main') else None
     footer_content = soup.find('footer').prettify() if soup.find('footer') else None
     
-    # Calculate accessibility scores
-    accessibility_scores = calculate_accessibility_scores(heading_structure, image_alt_text, page_title)
-    
     return {
-        'page_name': page_name,
+        'url': url,
         'page_title': page_title,
         'heading_structure': heading_structure,
         'image_alt_text': image_alt_text,
         'videos': videos,
-        'accessibility_scores': accessibility_scores
     }

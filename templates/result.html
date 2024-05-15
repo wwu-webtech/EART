@@ -43,8 +43,11 @@
                     <div class="result-container">
                         <h1>Efficient Accessibility Review Tool Result</h1>
                         {% if data %}
-                            <h2>{{ data.page_name }}</h2>
-                            <p><strong>Page Title:</strong> {{ data.page_title }}</p>
+                            <h3>Page Title:</h3>
+                            <p>{{ data.page_title }}</p>
+
+                            <h3>Page URL:</h3>
+                            <p>{{ data.url }}</p>
                             
                             <h3>Heading Structure:</h3>
                             <table>
@@ -77,7 +80,7 @@
                                 <tbody>
                                     {% for image in data.image_alt_text %}
                                         <tr>
-                                            <td><img src="{{ image.0 }}" alt="Image" onerror="this.onerror=null; this.src='https://www.wwu.edu{{ image.0 }}';" ></td>
+                                            <td><img src="{{ image.0 }}" alt="Image" onerror="this.onerror=null; this.src='{{ data.url }}{{ image.0 }}';" ></td>
                                             <td class="image-src-cell">{{ image.0 }}</td>
                                             <td>{{ image.1 }}</td>
                                             <td><button onclick="copyImageLink('{{ image.0 }}')">Copy</button></td>
