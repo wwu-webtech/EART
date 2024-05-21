@@ -72,12 +72,12 @@
                                     {% for image in data.image_alt_text %}
                                         <tr>
                                             <td>
-                                                <img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="handleImageError(this, '{{ data.url }}{{ image.0 }}')">
+                                                <img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="handleImageError(this, '{{ data.base_domain }}{{ image.0 }}')">
                                             </td>
                                             <td class="image-src-cell">{{ image.0 }}</td>
                                             <td>{{ image.1 }}</td>
                                             <td>
-                                                <button onclick="copyImageLink(this)" data-original-src="{{ image.0 }}" data-fallback-src="{{ data.url }}{{ image.0 }}">Copy</button>
+                                                <button onclick="copyImageLink(this)" data-original-src="{{ image.0 }}" data-fallback-src="{{ data.base_domain }}{{ image.0 }}">Copy</button>
                                             </td>
                                         </tr>
                                     {% endfor %}
