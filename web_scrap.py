@@ -46,10 +46,11 @@ def scrape_website(url):
     
     # Parse the URL and keep only the base domain
     parsed_url = urlparse(url)
-    base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}/"
+    base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}/?/?"
     
     return {
-        'url': base_domain,
+        'url': url,
+        'base_domain': base_domain,
         'page_title': page_title,
         'heading_structure': heading_structure,
         'image_alt_text': image_alt_text,
