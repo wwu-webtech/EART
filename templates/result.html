@@ -80,10 +80,10 @@
                                 <tbody>
                                     {% for image in data.image_alt_text %}
                                         <tr>
-                                            <td><img src="{{ image.0 }}" alt="Image" onerror="this.onerror=null; this.src='{{ data.url }}{{ image.0 }}';" ></td>
+                                            <td><img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="this.onerror=null; this.src='{{ data.url }}{{ image.0 }}';" ></td>
                                             <td class="image-src-cell">{{ image.0 }}</td>
                                             <td>{{ image.1 }}</td>
-                                            <td><button onclick="copyImageLink('{{ image.0 }}')">Copy</button></td>
+                                            <td><button onclick="copyImageLink('{{ data.url }}{{ image.0 }}')">Copy</button></td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
