@@ -12,7 +12,6 @@
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
-    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-footer.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>
@@ -80,10 +79,14 @@
                                 <tbody>
                                     {% for image in data.image_alt_text %}
                                         <tr>
-                                            <td><img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="this.onerror=null; this.src='{{ data.url }}{{ image.0 }}';" ></td>
+                                            <td>
+                                                <img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="handleImageError(this, '{{ data.url }}{{ image.0 }}')">
+                                            </td>
                                             <td class="image-src-cell">{{ image.0 }}</td>
                                             <td>{{ image.1 }}</td>
-                                            <td><button onclick="copyImageLink('{{ data.url }}{{ image.0 }}')">Copy</button></td>
+                                            <td>
+                                                <button onclick="copyImageLink(this)" data-original-src="{{ image.0 }}" data-fallback-src="{{ data.url }}{{ image.0 }}">Copy</button>
+                                            </td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
@@ -109,8 +112,20 @@
     </div>
 
     <script>
-        function copyImageLink(link) {
-            navigator.clipboard.writeText(link).then(function() {
+        function handleImageError(img, fallbackSrc) {
+            img.onerror = null;
+            img.src = fallbackSrc;
+            img.closest('tr').querySelector('.image-src-cell').textContent = fallbackSrc;
+            img.setAttribute('data-current-src', fallbackSrc);
+        }
+
+        function copyImageLink(button) {
+            const imgElement = button.closest('tr').querySelector('img');
+            const originalSrc = button.getAttribute('data-original-src');
+            const fallbackSrc = button.getAttribute('data-fallback-src');
+            const currentSrc = imgElement.getAttribute('data-current-src') || originalSrc;
+            
+            navigator.clipboard.writeText(currentSrc).then(function() {
                 alert("Image link copied to clipboard!");
             }, function(err) {
                 console.error('Could not copy text: ', err);

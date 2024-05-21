@@ -1,8 +1,6 @@
-# web_scrap.py
-
 import requests
 from bs4 import BeautifulSoup
-from accessibility_scorer import calculate_accessibility_scores
+from urllib.parse import urlparse
 
 def scrape_website(url):
     # Send a GET request to the URL
@@ -20,7 +18,6 @@ def scrape_website(url):
     # Extract the alt text on each of the images on the page
     images = soup.find_all('img')
     image_alt_text = [(image['src'], image.get('alt')) for image in images]
-
 
     # Extract videos from direct <video> elements
     videos = []
@@ -41,15 +38,18 @@ def scrape_website(url):
             video_id = iframe['src'].split('/')[-1]
             videos.append({'source': 'https://player.vimeo.com/video/' + video_id, 'alt': ''})
         # Add other video hosting platforms as needed
-        
 
     # Extract header, main, and footer contents
     header_content = soup.find('header').prettify() if soup.find('header') else None
     main_content = soup.find('main').prettify() if soup.find('main') else None
     footer_content = soup.find('footer').prettify() if soup.find('footer') else None
     
+    # Parse the URL and keep only the base domain
+    parsed_url = urlparse(url)
+    base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}/"
+    
     return {
-        'url': url,
+        'url': base_domain,
         'page_title': page_title,
         'heading_structure': heading_structure,
         'image_alt_text': image_alt_text,
