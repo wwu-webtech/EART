@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Grader Result</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+
+    <!-- Ashlar components scripts -->
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/search.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/pre-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>
+
+    <style>
+        .image-src-cell {
+            max-width: 200px; /* Adjust the maximum width as needed */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <wwu-pre-header></wwu-pre-header>
+            <wwu-header sitename="Efficient Accessibility Review Tool" regioncontent=""></wwu-header>
+            <!--
+            <wwu-main-nav style="text-align: center;">
+                <a href="/" style="font-size: 100px;">Home</a>        
+            </wwu-main-nav>
+            -->
+        </header>
+        <main id="main-content">
+            <div class="page-content">
+                <div class="region-wrapper">
+                    <div class="result-container">
+                        <h1>Efficient Accessibility Review Tool Result</h1>
+                        {% if data %}
+                            <h3>Page Title:</h3>
+                            <p>{{ data.page_title }}</p>
+
+                            <h3>Page URL:</h3>
+                            <p>{{ data.url }}</p>
+                            
+                            <h3>Heading Structure:</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Heading Level</th>
+                                        <th scope="col">Heading Text</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for heading in data.heading_structure %}
+                                        <tr>
+                                            <td>{{ heading.0 }}</td>
+                                            <td>{{ heading.1 }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+                            <h3>Image Alt Text:</h3>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Image</th>
+                                        <th scope="col">Image Src</th>
+                                        <th scope="col">Alt Text</th>
+                                        <th scope="col">Copy Image Link</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for image in data.image_alt_text %}
+                                        <tr>
+                                            <td>
+                                                <img src="{{ image.0 }}" alt="{{ image.1 }}" onerror="handleImageError(this, '{{ data.url }}', '{{ image.0 }}')">
+                                            </td>
+                                            <td class="image-src-cell">{{ image.0 }}</td>
+                                            <td>{{ image.1 }}</td>
+                                            <td>
+                                                <button onclick="copyImageLink(this)" data-original-src="{{ image.0 }}" data-base-url="{{ data.url }}">Copy</button>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                
+                            </table>
+                            
+                            <h3>Videos:</h3>
+                            <ul>
+                                {% for video in data.videos %}
+                                    <li>Source: {{ video.source }}, Alt: {{ video.alt }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p>Please provide a URL.</p>
+                        {% endif %}
+                    </div> <!-- class "result-container"   -->
+                </div> <!-- class region-wrapper  -->
+            </div> <!-- class "page-content" -->
+        </main>
+        <footer>
+            <wwu-footer></wwu-footer>
+        </footer>
+    </div>
+
+    <script>
+        function handleImageError(img, baseUrl, originalSrc) {
+    img.onerror = null; // Remove the previous error handler to avoid infinite loops
+
+    // Parse the base URL
+    const url = new URL(baseUrl);
+
+    // Extract the path parts and remove empty parts
+    const pathParts = url.pathname.split('/').filter(part => part);
+
+    // Function to attempt loading the image from successively higher directories
+    function tryNextFallback() {
+        // Ensure we do not trim beyond the domain
+        if (pathParts.length > 1) {
+            // Remove the last part of the path
+            pathParts.pop();
+            
+            // Construct the updated URL with the new path
+            const updatedUrl = url.origin + '/' + pathParts.join('/') + '/' + originalSrc;
+
+            // Set the image source to the updated URL
+            img.src = updatedUrl;
+
+            // Set the onerror handler to try the next fallback
+            img.onerror = tryNextFallback;
+
+            // Update the displayed URL in the cell
+            img.closest('tr').querySelector('.image-src-cell').textContent = updatedUrl;
+        } else {
+            console.error('Image could not be loaded.'); // Log an error if the image cannot be loaded
+        }
+    }
+
+    // Start the fallback process
+    tryNextFallback();
+}
+
+
+        function copyImageLink(button) {
+            const imgElement = button.closest('tr').querySelector('img');
+            const originalSrc = button.getAttribute('data-original-src');
+            const baseUrl = button.getAttribute('data-base-url');
+            const currentSrc = imgElement.getAttribute('data-current-src') || (new URL(originalSrc, baseUrl)).href;
+
+            navigator.clipboard.writeText(currentSrc).then(function() {
+                alert("Image link copied to clipboard!");
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
