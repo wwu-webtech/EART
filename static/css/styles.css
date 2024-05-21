@@ -87,3 +87,10 @@ input[type="submit"]:hover {
 .result-container th {
     background-color: #c7c7c7; /* Dark gray background */
 }
+
+.image-src-cell {
+    max-width: 200px; /* Adjust the maximum width as needed */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
