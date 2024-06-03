@@ -11,9 +11,45 @@ def scrape_website(url):
     # Extract the name of the page and its title element
     page_title = soup.find('title').get_text()
     
-    # Extract the heading structure of the page
-    headings = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
-    heading_structure = [(heading.name, heading.text.strip()) for heading in headings]
+    # Initialize dictionaries to hold headings by section
+    headings_by_section = {
+        'header': [],
+        'main': [],
+        'footer': []
+    }
+    
+    # Extract and categorize headings
+    def extract_headings(section, section_name):
+        if section:
+            headings = section.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+            for heading in headings:
+                headings_by_section[section_name].append({
+                    'tag': heading.name,
+                    'text': heading.text.strip(),
+                    'parent_html': heading.parent.prettify()
+                })
+
+    # Extract headings from <header>, <main>, and <footer>
+    header_section = soup.find('header')
+    main_section = soup.find('main')
+    footer_section = soup.find('footer')
+    
+    extract_headings(header_section, 'header')
+    extract_headings(main_section, 'main')
+    extract_headings(footer_section, 'footer')
+    
+    # If no <header>, <main>, and <footer> are found, extract from the whole document
+    if not header_section and not main_section and not footer_section:
+        headings_by_section = {
+            'document': []
+        }
+        headings = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+        for heading in headings:
+            headings_by_section['document'].append({
+                'tag': heading.name,
+                'text': heading.text.strip(),
+                'parent_html': heading.parent.prettify()
+            })
     
     # Extract the alt text on each of the images on the page
     images = soup.find_all('img')
@@ -39,11 +75,6 @@ def scrape_website(url):
             videos.append({'source': 'https://player.vimeo.com/video/' + video_id, 'alt': ''})
         # Add other video hosting platforms as needed
 
-    # Extract header, main, and footer contents
-    header_content = soup.find('header').prettify() if soup.find('header') else None
-    main_content = soup.find('main').prettify() if soup.find('main') else None
-    footer_content = soup.find('footer').prettify() if soup.find('footer') else None
-    
     # Parse the URL and keep only the base domain
     parsed_url = urlparse(url)
     base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
@@ -52,7 +83,7 @@ def scrape_website(url):
         'url': url,
         'base_domain': base_domain,
         'page_title': page_title,
-        'heading_structure': heading_structure,
+        'headings_by_section': headings_by_section,
         'image_alt_text': image_alt_text,
         'videos': videos,
     }

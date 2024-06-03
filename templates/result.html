@@ -15,18 +15,12 @@
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
     <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>
-
 </head>
 <body>
     <div class="container">
         <header>
             <wwu-pre-header></wwu-pre-header>
             <wwu-header sitename="Efficient Accessibility Review Tool" regioncontent=""></wwu-header>
-            <!--
-            <wwu-main-nav style="text-align: center;">
-                <a href="/" style="font-size: 100px;">Home</a>        
-            </wwu-main-nav>
-            -->
         </header>
         <main id="main-content">
             <div class="page-content">
@@ -34,31 +28,47 @@
                     <div class="result-container">
                         <h1>Efficient Accessibility Review Tool Result</h1>
                         {% if data %}
-                            <h3>Page Title:</h3>
+                            <h2>Page Title:</h2>
                             <p>{{ data.page_title }}</p>
 
-                            <h3>Page URL:</h3>
+                            <h2>Page URL:</h2>
                             <p>{{ data.url }}</p>
                             
-                            <h3>Heading Structure:</h3>
+                            <h2>Headings:</h2>
                             <table>
                                 <thead>
                                     <tr>
+                                        <th scope="col">Section</th>
                                         <th scope="col">Heading Level</th>
                                         <th scope="col">Heading Text</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for heading in data.heading_structure %}
+                                    {% for heading in data.headings_by_section.header %}
                                         <tr>
-                                            <td>{{ heading.0 }}</td>
-                                            <td>{{ heading.1 }}</td>
+                                            <td>Header</td>
+                                            <td>{{ heading.tag }}</td>
+                                            <td>{{ heading.text }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for heading in data.headings_by_section.main %}
+                                        <tr>
+                                            <td>Main</td>
+                                            <td>{{ heading.tag }}</td>
+                                            <td>{{ heading.text }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {% for heading in data.headings_by_section.footer %}
+                                        <tr>
+                                            <td>Footer</td>
+                                            <td>{{ heading.tag }}</td>
+                                            <td>{{ heading.text }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>
                             </table>
 
-                            <h3>Image Alt Text:</h3>
+                            <h2>Image Alt Text:</h2>
                             <table>
                                 <thead>
                                     <tr>
@@ -82,10 +92,9 @@
                                         </tr>
                                     {% endfor %}
                                 </tbody>
-                                
                             </table>
                             
-                            <h3>Videos:</h3>
+                            <h2>Videos:</h2>
                             <ul>
                                 {% for video in data.videos %}
                                     <li>Source: {{ video.source }}, Alt: {{ video.alt }}</li>
@@ -102,7 +111,6 @@
             <wwu-footer></wwu-footer>
         </footer>
     </div>
-
     <script>
         function handleImageError(img, fallbackSrc) {
             img.onerror = null;
