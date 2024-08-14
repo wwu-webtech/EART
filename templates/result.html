@@ -21,12 +21,15 @@
         <header>
             <wwu-pre-header></wwu-pre-header>
             <wwu-header sitename="Efficient Accessibility Review Tool" regioncontent=""></wwu-header>
+
+            <!-- A visually stunning main navigation menu 
+             -->
         </header>
         <main id="main-content">
             <div class="page-content">
                 <div class="region-wrapper">
                     <div class="result-container">
-                        <h1>Efficient Accessibility Review Tool Result</h1>
+                        <h1>Efficient Accessibility Review Tool Results</h1>
                         {% if data %}
                             <h2>Page Title:</h2>
                             <p>{{ data.page_title }}</p>
@@ -68,7 +71,7 @@
                                 </tbody>
                             </table>
 
-                            <h2>Image Alt Text:</h2>
+                            <h2>Alt Text:</h2>
                             <table>
                                 <thead>
                                     <tr>
@@ -103,6 +106,8 @@
                         {% else %}
                             <p>Please provide a URL.</p>
                         {% endif %}
+
+
                     </div> <!-- class "result-container"   -->
                 </div> <!-- class region-wrapper  -->
             </div> <!-- class "page-content" -->

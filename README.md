@@ -1,6 +1,6 @@
 # EART (Efficient Accessibility Review Tool)
 
-EART is a tool designed to facilitate efficient accessibility reviews of web applications.
+The EART is a tool designed to help facilitate efficient accessibility reviews of digital technologies. It will display, in the output, a summary of elements on the page. Then we can analyze the output to notice trends.
 
 ## Building the EART
 

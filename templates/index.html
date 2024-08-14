@@ -40,17 +40,30 @@
         <div class="region-wrapper">
           <div class="app-container">
             <h1>Efficient Accessibility Review Tool (EART)</h1>
+
+            <h2>Welcome!</h2>
+
+            <p>Welcome to the Efficient Accessibility Review Tool (EART). This tool is designed to help streamline the consistency of manual accessibility reviews in an institutional setting where WCAG conformance is required.
+            </p>
+            <p>
+              Get started by entering the URL of the website you want to analyze and then click on the "Evaluate" button.
+            </p> 
+<br>
+
+
+
             <form id="urlForm" action="/" method="post" onsubmit="AutofillOnSubmit(event)">
               <!-- Ensure the label is properly included -->
-              <label for="url">Enter Website URL:</label>
+              <label for="url"><h2>Website URL to evaluate:</h2>
+              </label>
               <input type="text" id="url" name="url">
               <input type="submit" value="Evaluate">
             </form>
 
-            <h2>Welcome!</h2>
+            </div> <!-- class "app-container"   -->
 
-            <p>Welcome to the Efficient Accessibility Review Tool (EART)! This tool is designed to streamline accessibility reviews for web applications, empowering developers and accessibility testers to ensure conformance with accessibility standards. Get started by entering the URL of the website you want to analyze and then click on the "Evaluate" button. Happy reviewing!</p> 
-          </div> <!-- class "app-container"   -->
+
+
         </div> <!-- class region-wrapper  -->
       </div> <!-- class "page-content" -->
     </main>
