@@ -1,0 +1,58 @@
+---
+const { title } = Astro.props;
+import "./src/styles/global.css";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+
+    <!-- autofill -->
+    <script src="/autofill.js" type="text/javascript"></script>
+
+    <!-- Ashlar components scripts prod 
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/search.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/pre-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/logo.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-header.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/social-media-icons.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/wwu-footer.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/main-navigation.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/accessible-mega-menu.js"></script>
+    <script src="https://ashlar.blob.core.windows.net/ashlar-theme-files/js/menu-extras.js"></script>
+	-->
+    <!-- Ashlar components for dev -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" defer></script>
+    <script src="../public/ashlar/search.js" defer></script>
+    <script src="../public/ashlar/pre-header.js" defer></script>
+    <script src="../public/ashlar/logo.js" defer></script>
+    <script src="../public/ashlar/wwu-header.js" defer></script>
+    <script src="../public/ashlar/social-media-icons.js" defer></script>
+    <script src="../public/ashlar/wwu-footer.js" defer></script>
+    <script src="../public/ashlar/main-navigation.js" defer></script>
+    <script src="../public/ashlar/accessible-mega-menu.js" defer></script>
+    <script src="../public/ashlar/menu-extras.js" defer></script>
+  </head>
+  <body>
+    <div>
+      <header>
+        <wwu-pre-header></wwu-pre-header>
+        <wwu-header
+          sitename="Efficient Accessibility Review Tool"
+          regioncontent=""></wwu-header>
+      </header>
+    </div>
+    <main>
+      <div class="flex justify-center text-center">
+        <h1>Efficient Accessibility Review Tool (EART)</h1>
+      </div>
+      <slot />
+    </main>
+  </body>
+  <footer>
+    <wwu-footer></wwu-footer>
+  </footer>
+</html>
