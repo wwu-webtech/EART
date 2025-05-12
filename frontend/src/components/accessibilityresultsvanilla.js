@@ -1,9 +1,5 @@
-// src/components/AccessibilityResults.js
-import Chart from "chart.js/auto";
-
 let initialized = false;
 const MAX_CHARS = 80;
-
 // 1) Audit headings: returns issues and flagged indices
 function auditHeadings(flatHeadings) {
   const issues = [];
@@ -33,7 +29,6 @@ function auditHeadings(flatHeadings) {
 
   return { issues, flagged };
 }
-
 // 2) Build nested heading tree with visual cards
 function buildHeadingTree(flatHeadings, flaggedSet) {
   const container = document.createElement("div");
@@ -67,7 +62,6 @@ function buildHeadingTree(flatHeadings, flaggedSet) {
 
   return container;
 }
-
 // 3) Audit image alt-texts
 function auditImageAlts(imageAltText) {
   const issues = [];
@@ -80,7 +74,6 @@ function auditImageAlts(imageAltText) {
   });
   return issues;
 }
-
 // 4) Render summary of issues
 function renderSummary(headingIssues, imageIssues) {
   const ctn = document.getElementById("results");
@@ -102,7 +95,6 @@ function renderSummary(headingIssues, imageIssues) {
   }
   ctn.appendChild(summary);
 }
-
 // 5) Main function: render headings tree & interactive image gallery
 function drawCharts(data) {
   if (!data || initialized) return;
@@ -223,5 +215,4 @@ function drawCharts(data) {
     renderGallery(sorted);
   });
 }
-
 window.addEventListener("wwu-data", (e) => drawCharts(e.detail));

@@ -2,88 +2,103 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
-def scrape_website(url):
-    # Send a GET request to the URL
-    response = requests.get(url)
-    # Parse the HTML content
-    soup = BeautifulSoup(response.text, 'html.parser')
-    
-    # Extract the name of the page and its title element
-    page_title = soup.find('title').get_text()
-    
-    # Initialize dictionaries to hold headings by section
-    headings_by_section = {
-        'header': [],
-        'main': [],
-        'footer': []
-    }
-    
-    # Extract and categorize headings
-    def extract_headings(section, section_name):
-        if section:
-            headings = section.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
-            for heading in headings:
-                headings_by_section[section_name].append({
-                    'tag': heading.name,
-                    'text': heading.text.strip(),
-                    'parent_html': heading.parent.prettify()
-                })
 
-    # Extract headings from <header>, <main>, and <footer>
-    header_section = soup.find('header')
-    main_section = soup.find('main')
-    footer_section = soup.find('footer')
-    
-    extract_headings(header_section, 'header')
-    extract_headings(main_section, 'main')
-    extract_headings(footer_section, 'footer')
-    
-    # If no <header>, <main>, and <footer> are found, extract from the whole document
-    if not header_section and not main_section and not footer_section:
-        headings_by_section = {
-            'document': []
-        }
-        headings = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
-        for heading in headings:
-            headings_by_section['document'].append({
-                'tag': heading.name,
-                'text': heading.text.strip(),
-                'parent_html': heading.parent.prettify()
+def analyze_headings(section, section_name, existing_h1_count):
+    headings = []
+    last_level = 0
+
+    if section:
+        found = section.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+        for h in found:
+            # slice everything after the h so we get the heading level
+            level = int(h.name[1:])
+            issue = None
+            # check if theres multiple h1 tags
+            if level == 1:
+                existing_h1_count[0] += 1
+                if existing_h1_count[0] > 1:
+                    issue = f"Multiple H1 tags found"
+            # check for level skips
+            if last_level and level > last_level + 1:
+                issue = "Skipped heading level"
+            # add the current heading to the heading object list
+            headings.append({
+                "section": section_name,
+                "issue": issue,
+                "level": level,
+                "text": h.get_text(strip=True),
+                "parent_html": h.parent.prettify()
             })
-    
-    # Extract the alt text on each of the images on the page
-    images = soup.find_all('img')
-    image_alt_text = [(image['src'], image.get('alt')) for image in images]
+            last_level = level
 
-    # Extract videos from direct <video> elements
+        return headings
+
+def extract_images(soup):
+    images = []
+    for img in soup.find_all('img'):
+        images.append({
+            "src": img.get('src'),
+            "alt": img.get('alt')
+        })
+    return images
+
+def extract_videos(soup):
+    #list of common video sites, so we can filter for just 
+    #video sites and not ads, google maps, other websites
+    commonVideo = ['youtube', 'vimeo', 'facebook', 'tiktok', 'reddit',
+                     'imgur', 'twitch', 'dailymotion', 'ted', 'instagram',
+                     'google drive']
     videos = []
-    video_elements = soup.find_all('video')
-    for video in video_elements:
-        video_source = video.get('src')
-        video_alt = video.get('alt')
-        videos.append({'source': video_source, 'alt': video_alt})
-    
-    # Extract videos from embedded iframes
-    iframe_elements = soup.find_all('iframe')
-    for iframe in iframe_elements:
-        # Check if the iframe contains a video source
-        if 'youtube' in iframe['src']:
-            video_id = iframe['src'].split('/')[-1]
-            videos.append({'source': 'https://www.youtube.com/embed/' + video_id, 'alt': ''})
-        elif 'vimeo' in iframe['src']:
-            video_id = iframe['src'].split('/')[-1]
-            videos.append({'source': 'https://player.vimeo.com/video/' + video_id, 'alt': ''})
-        # Add other video hosting platforms as needed
+    for vid in soup.find_all('video'):
+        videos.append({
+            "src": vid.get('src'),
+            "alt": vid.get('alt')
+        })
+    #look for iframe videos
+    for iframe in soup.find_all('iframe'):
+        src = iframe.get('src', '')
+        if any(domain in src for domain in commonVideo):
+            videos.append({
+                "src": src,
+                "title": iframe.get('title')
+            })
+    return 
 
-    # Parse the URL and keep only the base domain
+def scrape_website(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    #page title
+    title_tag = soup.find('title')
+    if title_tag:
+        page_title = soup.get_text(strip=True)
+    else:
+        page_title = ""
+    
+    existing_h1_count = [0]
+    headings = []
+    for section_name in ['header', 'main', 'footer']:
+        section = soup.find(section_name)
+        headings += analyze_headings(section, section_name, existing_h1_count)
+    #if above yields no headings, sections arent defined, so scan entire document
+    if not headings:
+        headings = analyze_headings(soup, 'document', existing_h1_count)
+    
+    images = extract_images(soup)
+    videos = extract_videos(soup)
+
     parsed_url = urlparse(url)
     base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
-    
+    page_path = f"{parsed_url.path}"
+
     return {
-        'url': url,
-        'base_domain': base_domain,
-        'page_title': page_title,
-        'headings_by_section': headings_by_section,
-        'image_alt_text': image_alt_text,
-        'videos': videos,
+        "url": url,
+        "base_domain": base_domain,
+        "page_title": page_title,
+        "page_path": page_path,
+        "headings": headings,
+        "images": images,
+        "videos": videos,
     }
+
+    
