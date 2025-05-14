@@ -1,3 +1,4 @@
+/* not in use currently */
 function AutofillOnSubmit(event) {
   event.preventDefault(); // Prevent default form submission
   var urlInput = document.getElementById("url");

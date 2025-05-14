@@ -1,1 +1,9 @@
 @import "tailwindcss";
+/* styles.css or global stylesheet */
+.token,
+code[class*="language-"],
+pre[class*="language-"] {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+@custom-variant dark (&:where(.dark, .dark *));

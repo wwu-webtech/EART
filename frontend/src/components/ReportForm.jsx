@@ -7,7 +7,7 @@ export const ReportForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchReport("https://wwu.edu");
+    fetchReport(url);
   };
 
   return (
