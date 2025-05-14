@@ -35,11 +35,14 @@ def analyze_headings(section, section_name, existing_h1_count):
 
 def extract_images(soup):
     images = []
+    imgnum = 1
     for img in soup.find_all('img'):
         images.append({
+            "imgnum": (imgnum),
             "src": img.get('src'),
             "alt": img.get('alt')
         })
+        imgnum += 1
     return images
 
 def extract_videos(soup):
