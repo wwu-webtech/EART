@@ -1,6 +1,7 @@
 // src/components/Report.jsx
 import { useResults } from "./ResultsProvider";
 import { useState, useMemo } from "react";
+import { useRef } from "react";
 import CodeBlock from "./CodeBlock";
 
 function ImageCard({ src, alt, imgnum, base }) {
@@ -77,7 +78,7 @@ function ImageCard({ src, alt, imgnum, base }) {
             {isLong && (
               <span
                 onClick={() => setExpanded(false)}
-                className="ml-1 dark:text-blue-200 text-blue-500 underline text-sm cursor-pointer"
+                className="ml-1 dark:text-blue-200 text-[#0062a0] underline text-sm cursor-pointer"
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) =>
@@ -95,7 +96,7 @@ function ImageCard({ src, alt, imgnum, base }) {
             {preview}
             <span
               onClick={() => setExpanded(true)}
-              className="ml-1 dark:text-blue-200 text-blue-500 underline text-sm cursor-pointer"
+              className="ml-1 dark:text-blue-200 text-[#0062a0] underline text-sm cursor-pointer"
               role="button"
               tabIndex={0}
               onKeyDown={(e) =>
@@ -117,9 +118,17 @@ export function Report() {
   const { results } = useResults();
   const [sortBy, setSortBy] = useState("appearance");
   const [expandedHeadings, setExpandedHeadings] = useState({});
+  const toggleButtonRefs = useRef({});
 
   const toggleHeading = (index) => {
     setExpandedHeadings((prev) => ({ ...prev, [index]: !prev[index] }));
+    // if we just closed it, return focus
+    if (expandedHeadings[index]) {
+      // small delay to let React un-render the panel
+      setTimeout(() => {
+        toggleButtonRefs.current[index]?.focus();
+      }, 0);
+    }
   };
 
   const headings = useMemo(() => results?.headings || [], [results]);
@@ -141,47 +150,49 @@ export function Report() {
 
   return (
     <div className="p-4" aria-live="polite">
-      {/* Summary */}
-      <div
-        className="mb-8 p-4 dark:bg-yellow-50 bg-slate-700 rounded-lg"
-        role="status"
-      >
-        {headingIssues.length === 0 && imageIssues.length === 0 ? (
-          <p className="font-bold dark:text-green-700 text-white">
-            🎉 No accessibility issues detected!
-          </p>
-        ) : (
-          <>
-            <p className="font-bold text-red-700">
-              Accessibility Issues Found:
-            </p>
-            <ul className="list-disc list-inside text-sm text-slate-700">
-              {[...headingIssues, ...imageIssues].map((msg, i) => (
-                <li key={i}>{msg}</li>
-              ))}
-            </ul>
-          </>
-        )}
-      </div>
-
       {/* Heading Structure */}
       <section aria-labelledby="headings-title" className="mb-8">
         <h2 id="headings-title" className="font-medium text-lg mb-2">
           Heading Structure
         </h2>
+        {/* Summary */}
+        <div
+          className="mb-8 p-4 dark:bg-[var(--light-green--lighter--80)] bg-[var(--blue--darker--20)] rounded-lg"
+          style={{ backgroundColor: headingIssues.length > 0 && "#fcb1b1" }}
+          role="status"
+        >
+          {headingIssues.length === 0 && imageIssues.length === 0 ? (
+            <p className="!m-0 font-bold dark:text-[var(--black)] text-white">
+              🎉 No heading issues detected!
+            </p>
+          ) : (
+            <>
+              <p className="!m-0 font-bold dark:text-[var(--black)] text-neutral-800">
+                Heading Issues Found:
+              </p>
+              <ul className="list-disc list-inside text-sm text-slate-700">
+                {[...headingIssues].map((msg, i) => (
+                  <li key={i}>{msg}</li>
+                ))}
+              </ul>
+            </>
+          )}
+        </div>
+        {/* Heading Hierarchy */}
         {headings.map((h, idx, arr) => {
           const prevLevel = idx > 0 ? arr[idx - 1].level : null;
-          const isExpanded = expandedHeadings[idx];
+          const isExpanded = !!expandedHeadings[idx];
           const hasIssue = !!h.issue;
           return (
             <div key={idx} className="mb-1">
               <div
-                className="flex items-center p-2 bg-slate-700 text-white border-4 rounded-lg group"
+                className="flex items-center p-2 bg-[var(--blue--darker--20)] text-white border-4 rounded-lg group"
                 style={{
                   marginLeft: `${(h.level - 1) * 1.75}rem`,
                   borderColor: hasIssue
-                    ? "oklch(80.8% 0.114 19.571)"
-                    : "oklch(37.2% 0.044 257.287)",
+                    ? "#912f2f" /*red*/
+                    : "var(--blue--darker--20)",
+                  backgroundColor: hasIssue && "#912f2f" /*red*/,
                 }}
               >
                 <span
@@ -200,16 +211,25 @@ export function Report() {
                   {h.text}
                 </span>
                 <div
-                  onKeyDown={(e) =>
-                    (e.key === "Enter" || e.key === " ") && !isExpanded
-                  }
+                  role="button"
+                  ref={(el) => (toggleButtonRefs.current[idx] = el)}
+                  tabIndex={0}
+                  aria-expanded={isExpanded}
+                  aria-live="polite"
                   onClick={() => toggleHeading(idx)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      toggleHeading(idx);
+                    }
+                    if (e.key === "Escape" && isExpanded) {
+                      e.preventDefault();
+                      toggleHeading(idx);
+                    }
+                  }}
                   className="select-none ml-auto text-sm text-white flex items-center gap-1 transition-all duration-300 group-hover:cursor-pointer ease-in-out group-hover:translate-x-[-4px]"
                 >
-                  <span
-                    role="button"
-                    className="flex items-end max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out"
-                  >
+                  <span className="flex items-end max-w-0 group-hover:max-w-xs overflow-hidden whitespace-nowrap transition-all duration-300 ease-in-out">
                     {hasIssue ? (
                       <>
                         <span className="text-[oklch(80.8%_0.114_19.571)] font-bold">
@@ -236,6 +256,7 @@ export function Report() {
               </div>
               {isExpanded && (
                 <div
+                  onKeyDown={(e) => e.key === "Escape" && toggleHeading(idx)}
                   className="all-unset mt-1 text-xs font-mono max-w-screen"
                   style={{ marginLeft: `${(h.level - 1) * 1.75}rem` }}
                 >
@@ -246,6 +267,7 @@ export function Report() {
                     language="html"
                     label="Parent HTML code block"
                     code={h.parent_html}
+                    className=""
                   />
                 </div>
               )}

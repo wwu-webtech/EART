@@ -1,3 +1,4 @@
+// src/components/CodeBlock.jsx
 import React from "react";
 
 export default function CodeBlock({
@@ -22,45 +23,48 @@ export default function CodeBlock({
   const lines = code.trimEnd().split("\n");
 
   return (
-    <div className="relative w-full group">
-      {/* scroll shadows (unchanged) */}
-      <div className="pointer-events-none absolute top-0 left-0 h-full w-8 z-10 bg-gradient-to-r from-[rgba(10,14,25,0.35)] dark:from-[rgba(20,25,35,0.35)] to-transparent" />
-      <div className="pointer-events-none absolute top-0 right-0 h-full w-8 z-10 bg-gradient-to-l from-[rgba(10,14,25,0.35)] dark:from-[rgba(20,25,35,0.35)] to-transparent" />
-      <div className="pointer-events-none absolute top-0 left-0 w-full h-6 z-10 bg-gradient-to-b from-[rgba(10,14,25,0.35)] dark:from-[rgba(20,25,35,0.35)] to-transparent" />
-      <div className="pointer-events-none absolute bottom-0 left-0 w-full h-6 z-10 bg-gradient-to-t from-[rgba(10,14,25,0.35)] dark:from-[rgba(20,25,35,0.35)] to-transparent" />
+    <div className="relative w-full">
+      {/* scroll shadows */}
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-8 rounded-xl bg-gradient-to-r from-gray-200 dark:from-gray-800 to-transparent z-10" />
+      <div className="pointer-events-none absolute top-0 right-0 h-full w-8 rounded-xl bg-gradient-to-l from-gray-200 dark:from-gray-800 to-transparent z-10" />
+      <div className="pointer-events-none absolute top-0 left-0 w-full h-6 rounded-xl bg-gradient-to-b from-gray-200 dark:from-gray-800 to-transparent z-10" />
+      <div className="pointer-events-none absolute bottom-0 left-0 w-full h-6 rounded-xl bg-gradient-to-t from-gray-200 dark:from-gray-800 to-transparent z-10" />
 
       {/* scrollable region */}
       <div
         role="region"
         aria-label={label}
         tabIndex={0}
-        className="w-full h-72 overflow-y-scroll overflow-x-auto rounded-lg bg-gray-900 dark:bg-gray-800 text-white dark:text-gray-100 text-base font-mono p-4"
+        className="w-full h-72 overflow-y-scroll overflow-x-auto rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-100 font-mono text-md p-4"
       >
-        <div
-          className="min-w-full grid gap-x-4"
-          style={{ display: "grid", gridTemplateColumns: "auto 1fr" }}
-        >
-          {lines.map((line, idx) => (
-            <React.Fragment key={idx}>
-              {/* gutter */}
-              <span
-                aria-hidden="true"
-                className="text-gray-500 select-none pr-4 text-right"
-              >
-                {idx + 1}
-              </span>
-
-              {/* now a DIV, not PRE */}
+        <div className="w-full">
+          {lines.map((line, idx) => {
+            const text = line || "empty line";
+            const labelText = `Line ${idx + 1}: ${text}`;
+            return (
               <div
+                key={idx}
                 tabIndex={0}
-                aria-roledescription="line"
-                aria-label={`Line ${idx + 1}: ${line || "empty line"}`}
-                className={`language-${language} block whitespace-pre focus:outline-none`}
+                aria-label={labelText}
+                className="grid grid-cols-[auto_1fr] gap-x-4 focus:outline-none mb-1"
               >
-                {line || "\u200B"}
+                {/* visible gutter, hidden from SR */}
+                <span
+                  aria-hidden="true"
+                  className="text-gray-500 pr-4 text-right"
+                >
+                  {idx + 1}
+                </span>
+                {/* visible code, hidden from SR */}
+                <span
+                  aria-hidden="true"
+                  className={`language-${language} whitespace-pre`}
+                >
+                  {line || "\u200B"}
+                </span>
               </div>
-            </React.Fragment>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

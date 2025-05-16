@@ -3,7 +3,5 @@
 .token,
 code[class*="language-"],
 pre[class*="language-"] {
-  background: transparent !important;
-  box-shadow: none !important;
 }
-@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
