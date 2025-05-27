@@ -114,6 +114,32 @@ function ImageCard({ src, alt, imgnum, base }) {
   );
 }
 
+function VideoCard({ src, title, alt, base }) {
+  const fullSrc = /^https?:/.test(src) ? src : base + src;
+  const placeholder = "";
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="text-center w-full h-48 text-black bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
+        <img
+          src={placeholder}
+          alt={`Video thumbnail for ${title || fullSrc}`}
+          className="object-cover h-full w-full"
+        />
+      </div>
+      {title && <h3 className="mt-2 text-sm font-medium">{title}</h3>}
+      <a
+        href={fullSrc}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 underline text-sm mt-1"
+      >
+        View Video
+      </a>
+      {alt && <p className="text-xs text-gray-500 mt-1">Alt text: {alt}</p>}
+    </div>
+  );
+}
 export function Report() {
   const { results } = useResults();
   const [sortBy, setSortBy] = useState("appearance");
@@ -136,6 +162,7 @@ export function Report() {
   const images = useMemo(() => results?.images || [], [results]);
   const imageIssues = useMemo(() => results?.image_issues || [], [results]);
   const base = results?.base_domain || "";
+  const videos = useMemo(() => results?.videos || [], [results]);
 
   const sortedImages = useMemo(() => {
     if (sortBy === "length") {
@@ -171,8 +198,10 @@ export function Report() {
                 Heading Issues Found:
               </p>
               <ul className="list-disc list-inside text-sm text-slate-700">
-                {[...headingIssues].map((msg, i) => (
-                  <li key={i}>{msg}</li>
+                {headingIssues.map((issueObj, i) => (
+                  <li key={i}>
+                    {`Heading #${issueObj.index + 1}: ${issueObj.issue}`}
+                  </li>
                 ))}
               </ul>
             </>
@@ -197,9 +226,9 @@ export function Report() {
               >
                 <span
                   aria-hidden="true"
-                  className="w-8 text-center font-bold mr-2 text-sm"
+                  className="w-12 text-center font-bold mr-2 text-sm"
                 >
-                  {"h" + h.level}
+                  {h.index + 1 + ". h" + h.level}
                 </span>
                 <span className="sr-only">
                   {prevLevel
@@ -294,6 +323,28 @@ export function Report() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {sortedImages.map((img, i) => (
             <ImageCard key={i} {...img} base={base} />
+          ))}
+        </div>
+      </section>
+      {/* Video Gallery */}
+      <section aria-labelledby="videos-title" className="mb-8">
+        <div className="flex items-center gap-4 mb-4">
+          <h2 id="videos-title" className="text-lg font-medium">
+            Video Gallery
+          </h2>
+        </div>
+        {videos.length == 0 ? (
+          <p>No videos on page.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {videos.map((vid, idx) => (
+              <VideoCard key={idx} {...vid} base={base} />
+            ))}
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {videos.map((vid, idx) => (
+            <VideoCard key={idx} {...vid} base={base} />
           ))}
         </div>
       </section>

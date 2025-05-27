@@ -3,9 +3,10 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
 
-def analyze_headings(section, section_name, existing_h1_count):
+def analyze_headings(section, section_name, existing_h1_count, index):
     headings = []
     last_level = 0
+    issues = []
 
     if section:
         found = section.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
@@ -17,21 +18,26 @@ def analyze_headings(section, section_name, existing_h1_count):
             if level == 1:
                 existing_h1_count[0] += 1
                 if existing_h1_count[0] > 1:
-                    issue = f"Multiple H1 tags found"
+                    issue = "Multiple H1 tags found"
             # check for level skips
             if last_level and level > last_level + 1:
                 issue = "Skipped heading level"
+            if issue:
+                issues.append({"issue": issue,
+                               "index": index
+                               })
             # add the current heading to the heading object list
             headings.append({
+                "index": index,
                 "section": section_name,
                 "issue": issue,
                 "level": level,
                 "text": h.get_text(strip=True),
                 "parent_html": h.parent.prettify()
             })
+            index += 1
             last_level = level
-
-        return headings
+    return headings, issues, index
 
 def extract_images(soup):
     images = []
@@ -65,31 +71,35 @@ def extract_videos(soup):
                 "src": src,
                 "title": iframe.get('title')
             })
-    return 
+    return videos
 
 def scrape_website(url):
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-
+    
     #page title
     title_tag = soup.find('title')
     if title_tag:
-        page_title = soup.get_text(strip=True)
+        page_title = title_tag.get_text(strip=True)
     else:
         page_title = ""
     
     existing_h1_count = [0]
     headings = []
+    heading_issues = []
+    index = 0
     for section_name in ['header', 'main', 'footer']:
         section = soup.find(section_name)
-        headings += analyze_headings(section, section_name, existing_h1_count)
+        sec_headings, sec_issues, index = analyze_headings(section, section_name, existing_h1_count, index)
+        headings += sec_headings
+        heading_issues += sec_issues
     #if above yields no headings, sections arent defined, so scan entire document
     if not headings:
-        headings = analyze_headings(soup, 'document', existing_h1_count)
-    
+        sec_headings, sec_issues, index = analyze_headings(soup, 'document', existing_h1_count, index)
+        headings = sec_headings
+        heading_issues = sec_issues
     images = extract_images(soup)
     videos = extract_videos(soup)
-
     parsed_url = urlparse(url)
     base_domain = f"{parsed_url.scheme}://{parsed_url.netloc}"
     page_path = f"{parsed_url.path}"
@@ -100,8 +110,7 @@ def scrape_website(url):
         "page_title": page_title,
         "page_path": page_path,
         "headings": headings,
+        "heading_issues": heading_issues,
         "images": images,
         "videos": videos,
     }
-
-    

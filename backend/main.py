@@ -1,11 +1,13 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from web_scrap import scrape_website
 
 app = Flask(__name__)
-CORS(app, resources={ r"/scrape": { "origins": "*" } })
+# allow CORS on everything
+CORS(app, supports_credentials=True)
 
-@app.route('/scrape', methods=['POST'])
+@app.route('/scrape', methods=['POST', 'OPTIONS'])
+@cross_origin()
 def scrape():
     data = request.get_json()
     url = data.get('url')
