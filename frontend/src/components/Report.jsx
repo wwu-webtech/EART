@@ -114,29 +114,86 @@ function ImageCard({ src, alt, imgnum, base }) {
   );
 }
 
-function VideoCard({ src, title, alt, base }) {
+function VideoCard({ src, title, alt, base, index }) {
   const fullSrc = /^https?:/.test(src) ? src : base + src;
-  const placeholder = "";
+  const [expanded, setExpanded] = useState(false);
+  const MAX_CHARS = 30;
+  const isLong = fullSrc.length > MAX_CHARS;
+  let preview = "";
+
+  if (isLong) {
+    preview = fullSrc.slice(0, MAX_CHARS);
+  }
+  console.log(preview);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="text-center w-full h-48 text-black bg-gray-200 rounded-lg flex items-center justify-center overflow-hidden">
-        <img
-          src={placeholder}
-          alt={`Video thumbnail for ${title || fullSrc}`}
-          className="object-cover h-full w-full"
-        />
+    <div className="flex flex-col justify-center text-center max-w-86 max-h-fit">
+      <h3 className="sr-only">{`Video #${index + 1}`}</h3>
+      <iframe
+        src={fullSrc}
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        title={title}
+        className="aspect-video h-48"
+      ></iframe>
+      <h3 aria-hidden>{`Video #${index + 1}`}</h3>
+      <div className="flex flex-col max-w-86 justify-center items-center">
+        <span className="flex gap-1 items-center justify-center">
+          <p className="text-sm !mb-0 w-fit font-semibold text-[var(--h3-color)]">
+            Title:
+          </p>
+          <p className="!mb-0 text-sm">{title}</p>
+        </span>
+        <span className="flex gap-1 items-start justify-center flex-wrap">
+          <p className="w-fit text-sm font-semibold text-[var(--h3-color)] !mb-0">
+            Source:
+          </p>
+          <p className="sr-only">{src}</p>
+          <p
+            className="text-sm text-start !text-wrap break-all max-w-[306.14px] !mb-0 "
+            aria-hidden="true"
+          >
+            {expanded || !isLong ? (
+              <>
+                {fullSrc}
+                {isLong && (
+                  <span
+                    onClick={() => setExpanded(false)}
+                    className="ml-1 dark:text-blue-200 text-[#0062a0] underline text-sm cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) =>
+                      (e.key === "Enter" || e.key === " ") && setExpanded(false)
+                    }
+                    aria-label="Collapse alt text"
+                    aria-expanded="true"
+                  >
+                    ...
+                  </span>
+                )}
+              </>
+            ) : (
+              <>
+                {preview}
+                <span
+                  onClick={() => setExpanded(true)}
+                  className="ml-1 dark:text-blue-200 text-[#0062a0] underline text-sm cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) =>
+                    (e.key === "Enter" || e.key === " ") && setExpanded(true)
+                  }
+                  aria-label="Expand full alt text"
+                  aria-expanded="false"
+                >
+                  ...
+                </span>
+              </>
+            )}
+          </p>
+        </span>
       </div>
-      {title && <h3 className="mt-2 text-sm font-medium">{title}</h3>}
-      <a
-        href={fullSrc}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-blue-600 underline text-sm mt-1"
-      >
-        View Video
-      </a>
-      {alt && <p className="text-xs text-gray-500 mt-1">Alt text: {alt}</p>}
     </div>
   );
 }
@@ -262,7 +319,7 @@ export function Report() {
                     {hasIssue ? (
                       <>
                         <span className="text-[oklch(80.8%_0.114_19.571)] font-bold">
-                          !{" "}
+                          ! &nbsp;{" "}
                         </span>
                         Show Issue Details
                       </>
@@ -336,17 +393,12 @@ export function Report() {
         {videos.length == 0 ? (
           <p>No videos on page.</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="flex justify-center gap-4 flex-wrap">
             {videos.map((vid, idx) => (
-              <VideoCard key={idx} {...vid} base={base} />
+              <VideoCard key={idx} index={idx} {...vid} base={base} />
             ))}
           </div>
         )}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {videos.map((vid, idx) => (
-            <VideoCard key={idx} {...vid} base={base} />
-          ))}
-        </div>
       </section>
     </div>
   );

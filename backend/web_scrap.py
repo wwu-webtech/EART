@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs, unquote
 
 
 def analyze_headings(section, section_name, existing_h1_count, index):
@@ -51,12 +51,27 @@ def extract_images(soup):
         imgnum += 1
     return images
 
+def convert_youtube_watch_to_embed(watch_url):
+    parsed = urlparse(watch_url)
+    query = parse_qs(parsed.query)
+    video_id = query.get('v', [None])[0]
+    playlist_id = query.get('list', [None])[0]
+
+    if not video_id:
+        return None  # not a valid watch URL
+
+    embed_url = f"https://www.youtube.com/embed/{video_id}"
+    if playlist_id:
+        embed_url += f"?list={playlist_id}"
+
+    return embed_url
+
 def extract_videos(soup):
     #list of common video sites, so we can filter for just 
     #video sites and not ads, google maps, other websites
     commonVideo = ['youtube', 'vimeo', 'facebook', 'tiktok', 'reddit',
                      'imgur', 'twitch', 'dailymotion', 'ted', 'instagram',
-                     'google drive']
+                     'google drive', 'wwu.edu/media/oembed']
     videos = []
     for vid in soup.find_all('video'):
         videos.append({
@@ -67,6 +82,16 @@ def extract_videos(soup):
     for iframe in soup.find_all('iframe'):
         src = iframe.get('src', '')
         if any(domain in src for domain in commonVideo):
+            if 'wwu.edu/media/oembed' in src:
+                parsed = urlparse(src)
+                query = parse_qs(parsed.query)
+                encoded_url = query.get('url', [None])[0]
+                if encoded_url:
+                    decoded_url = unquote(encoded_url)
+                    src = decoded_url
+                if 'youtube' in src:
+                    src = convert_youtube_watch_to_embed(src)
+
             videos.append({
                 "src": src,
                 "title": iframe.get('title')
