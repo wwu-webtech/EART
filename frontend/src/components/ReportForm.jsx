@@ -1,14 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useResults } from "./ResultsProvider";
 
 export const ReportForm = () => {
   const [url, setUrl] = useState("");
   const { fetchReport, loading } = useResults();
 
+  useEffect(() => {
+    console.log("API available:", !!window.api);
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("Form submitted with URL:", url);
     fetchReport(url);
   };
+
+  // Rest of the component remains the same
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center">

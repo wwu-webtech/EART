@@ -1,15 +1,31 @@
-// @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig } from "astro/config";
+import tailwindcss from "@tailwindcss/vite";
+import react from "@astrojs/react";
 
-import tailwindcss from '@tailwindcss/vite';
-
-import react from '@astrojs/react';
-
-// https://astro.build/config
 export default defineConfig({
-  vite: {
-    plugins: [tailwindcss()]
+  // Make all Astro URLs relative
+  base: "./",
+
+  // Default build behavior: put your CSS+JS next to index.html
+  build: {
+    assetsDir: ".",
   },
 
-  integrations: [react()]
+  vite: {
+    // Tell Vite itself to emit everything relative to the page
+    base: "./",
+    plugins: [tailwindcss()],
+    build: {
+      assetsDir: ".",
+      rollupOptions: {
+        output: {
+          entryFileNames: "[name].js",
+          chunkFileNames: "[name].js",
+          assetFileNames: "[name][extname]",
+        },
+      },
+    },
+  },
+
+  integrations: [react()],
 });

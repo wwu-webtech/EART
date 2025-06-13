@@ -1,0 +1,41 @@
+{
+  "name": "eart-desktop",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev:flask": "cd backend && python3 main.py",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:electron": "electron .",
+    "dev": "concurrently \"npm:dev:flask\" \"npm:dev:frontend\" \"npm:dev:electron\"",
+    "build:frontend": "cd frontend && npm run build && node fix-css-paths.js",
+    "build": "npm run build:frontend && electron-builder"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^36.4.0",
+    "electron-builder": "^26.0.12"
+  },
+  "build": {
+    "appId": "com.wwu.eart",
+    "asar": false,
+    "files": [
+      "electron/**",
+      "backend/**",
+      "frontend/dist/**",
+      "node_modules/**",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "backend/dist/EartFlaskBackend",
+        "to": "python_dist/EartFlaskBackend"
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.utilities"
+    },
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
