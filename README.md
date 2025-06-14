@@ -8,7 +8,7 @@ A web scraper designed to quickly display the semantic structure and content of 
 
 ## Supported Platforms for Standalone Application
 ### **PLEASE NOTE THAT PLATFORMS OTHER THAN MACOS HAVE NOT BEEN TESTED!**
-#### If your platform is unsupported you can still use the tool by running it locally in your browser.
+#### If your platform is unsupported you can still use the tool by [running it locally in your browser](https://github.com/wwu-webtech/EART#run-locally).
 
 **Windows:**
    - x86-64
