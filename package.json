@@ -2,13 +2,24 @@
   "name": "eart-desktop",
   "version": "1.0.0",
   "main": "electron/main.js",
+  "author": {
+    "name": "Kaige Stafford",
+    "email": "staffoj3@wwu.edu"
+  },
   "scripts": {
-    "dev:flask": "cd backend && python3 main.py",
     "dev:frontend": "cd frontend && npm run dev",
     "dev:electron": "electron .",
-    "dev": "concurrently \"npm:dev:flask\" \"npm:dev:frontend\" \"npm:dev:electron\"",
+    "dev": "concurrently \"npm:dev:frontend\" \"npm:dev:electron\"",
     "build:frontend": "cd frontend && npm run build && node fix-css-paths.js",
-    "build": "npm run build:frontend && electron-builder"
+    "prepare:backend:mac:arm64": "mkdir -p backend/dist && rm -f backend/dist/EartFlaskBackend && cp backend/dist/EartFlaskBackendMacArm64 backend/dist/EartFlaskBackend",
+    "build:mac:arm64": "npm run build:frontend && npm run prepare:backend:mac:arm64 && electron-builder --mac --arm64",
+    "prepare:backend:win:x64": "mkdir -p backend/dist && rm -f backend/dist/EartFlaskBackend.exe && cp backend/dist/EartFlaskBackendx86-64.exe backend/dist/EartFlaskBackend.exe",
+    "build:win:x64": "npm run build:frontend && npm run prepare:backend:win:x64 && electron-builder --win --x64",
+    "prepare:backend:linux:arm64": "mkdir -p backend/dist && rm -f backend/dist/EartFlaskBackend && cp backend/dist/EartFlaskBackendLinuxArm64 backend/dist/EartFlaskBackend",
+    "build:linux:arm64": "npm run build:frontend && npm run prepare:backend:linux:arm64 && electron-builder --linux --arm64",
+    "prepare:backend:linux:x64": "mkdir -p backend/dist && rm -f backend/dist/EartFlaskBackend && cp backend/dist/EartFlaskBackendLinuxAmd64 backend/dist/EartFlaskBackend",
+    "build:linux:x64": "npm run build:frontend && npm run prepare:backend:linux:x64 && electron-builder --linux --x64",
+    "build:all": "npm run build:mac:arm64 && npm run build:win:x64 && npm run build:linux:arm64 && npm run build:linux:x64"
   },
   "devDependencies": {
     "concurrently": "^9.1.2",
@@ -20,15 +31,18 @@
     "asar": false,
     "files": [
       "electron/**",
-      "backend/**",
       "frontend/dist/**",
       "node_modules/**",
       "package.json"
     ],
     "extraResources": [
       {
-        "from": "backend/dist/EartFlaskBackend",
-        "to": "python_dist/EartFlaskBackend"
+        "from": "backend/dist/",
+        "to": "python_dist/",
+        "filter": [
+          "EartFlaskBackend",
+          "EartFlaskBackend.exe"
+        ]
       }
     ],
     "mac": {
@@ -36,6 +50,13 @@
     },
     "win": {
       "target": "nsis"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility"
     }
   }
 }

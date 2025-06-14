@@ -1,0 +1,27 @@
+# Use an official Python runtime as a parent image
+FROM python:3.9-slim
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Install binutils (which provides objdump) and other build essentials if needed
+# Using apt-get for Debian-based images like python:3.9-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    binutils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the requirements file into the container at /app
+COPY requirements.txt .
+
+# Install any needed packages specified in requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Install PyInstaller
+RUN pip install --no-cache-dir pyinstaller
+
+# Copy the rest of the backend application code into the container at /app
+COPY . .
+
+# Command to execute when the container starts (for building)
+# This will place the output in /app/dist within the container
+CMD ["pyinstaller", "--name", "EartFlaskBackendLinux", "--onefile", "main.py"]
