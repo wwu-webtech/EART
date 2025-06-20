@@ -15,8 +15,6 @@ export const ReportForm = () => {
     fetchReport(url);
   };
 
-  // Rest of the component remains the same
-
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center">
       <div className="w-full max-w-md flex flex-col items-center">
