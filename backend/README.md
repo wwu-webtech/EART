@@ -36,10 +36,14 @@ In a production environment, consider deploying the application on a server usin
 - Khang
 - David
 
+
 ### Tech Stack
 The EART is built using the following technologies:
+#### Backend
 - Python
 - Flask
 - BeautifulSoup
 - Requests
+#### Frontend
+- Astro
 
